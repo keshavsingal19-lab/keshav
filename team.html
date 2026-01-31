@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Team | FAS SRCC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        'night-sky': '#0B1026',
+                        'star-gold': '#FFD700',
+                        'moon-white': '#F4F6F0',
+                        'glass': 'rgba(255, 255, 255, 0.03)',
+                        'glass-hover': 'rgba(255, 255, 255, 0.08)',
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                    },
+                    animation: {
+                        'twinkle': 'twinkle 4s infinite ease-in-out',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Background & Star Logic */
+        body {
+    /* 1. Put your image URL inside the quotes '' below */
+    /* 2. The rgba(...) part creates a dark tint so text is readable */
+    background-image: 
+        linear-gradient(rgba(9, 9, 16, 0.75), rgba(26, 31, 60, 0.8)),
+        url('images/teambg.svg');
+
+    /* This ensures the image covers the whole screen */
+    background-size: cover;
+    background-position: center;
+    
+    /* This keeps the image still while you scroll */
+    background-attachment: fixed;
+    
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out; opacity: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1026; }
+        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
+        
+        /* Animation Classes */
+        .fade-in-section {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible { opacity: 1; transform: none; }
+
+        /* Glassmorphism Utilities */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="text-moon-white antialiased">
+
+    <!-- Starfield -->
+    <div class="stars" id="star-container"></div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-night-sky/95 backdrop-blur-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-center items-center space-y-8 text-2xl font-serif hidden">
+        <button id="close-menu" class="absolute top-6 right-6 p-2 text-white hover:text-star-gold transition">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <a href="index.html#home" class="mobile-link hover:text-star-gold transition">Home</a>
+        <a href="about.html " class="mobile-link hover:text-star-gold transition">About</a>
+        <a href="gallery.html" class="mobile-link hover:text-star-gold transition">Gallery</a>
+        <a href="team.html" class="mobile-link text-star-gold transition">Team</a>
+        <a href="contact.html" class="mobile-link hover:text-star-gold transition">Contact</a>
+    </div>
+
+    <!-- Navbar -->
+    <header class="fixed w-full top-0 z-40 transition-all duration-300 border-b border-white/5 bg-night-sky/80 backdrop-blur-md" id="navbar">
+        <div class="relative container mx-auto px-6 h-24 flex justify-center items-center">
+            
+            <a href="index.html" class="absolute left-6 top-1/2 -translate-y-1/2 hidden md:block h-[128px] w-[128px] transition hover:scale-105 z-50">
+                <img src="images/FASlogo.svg" alt="FAS" class="h-full w-full object-contain drop-shadow-md" width="200px">
+            </a>
+
+            <nav class="hidden md:flex space-x-12 text-xs font-sans tracking-[0.2em] uppercase text-gray-300">
+                <a href="index.html#home" class="hover:text-star-gold transition duration-300 relative group">
+                    Home
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="about.html" class="hover:text-star-gold transition duration-300 relative group">
+                    About
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="gallery.html" class="hover:text-star-gold transition duration-300 relative group">
+                    Gallery
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="team.html" class="text-star-gold relative group">
+                    Team
+                    <span class="absolute -bottom-2 left-0 w-full h-px bg-star-gold"></span>
+                </a>
+                <a href="contact.html" class="hover:text-star-gold transition duration-300 relative group">
+                    Contact
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+            </nav>
+
+            <a href="index.html" class="absolute top-2 right-6 hidden md:block w-[128px] h-[80px] hover:scale-105 transition duration-300 cursor-pointer z-50">
+    <img src="images/srcclogo.svg" alt="SRCC" class="w-full h-full object-contain drop-shadow-lg">
+</a>
+
+            <button id="open-menu" class="md:hidden absolute right-6 p-2 text-white hover:bg-white/10 rounded-full transition">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+             <!-- Mobile Logo Placeholder (Absolute Left for mobile) -->
+             <a href="index.html" class="md:hidden absolute left-6 border/20 w-20 h-20 rounded-full flex items-center justify-center">
+                 <img src="images/FASlogo.svg" alt="FAS" class="w-full h-full object-contain drop-shadow-lg">
+             </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20">
+
+        <!-- ================= TEAM 2025-26 ================= -->
+        <section class="container mx-auto px-6 mb-32 fade-in-section">
+            <div class="text-center mb-16">
+                <p class="font-sans text-star-gold text-xs tracking-[0.4em] uppercase mb-4">Leadership</p>
+                <h1 class="font-serif text-4xl md:text-6xl text-white mb-8">Team 2025-26</h1>
+                <div class="w-24 h-px bg-white/20 mx-auto"></div>
+            </div>
+
+            <!-- Teachers in Charge (2025-26) -->
+            <div class="mb-24">
+                <h3 class="font-serif text-2xl text-center text-star-gold mb-12">Mentors</h3>
+                <div class="flex flex-wrap justify-center gap-12 md:gap-24">
+                    <!-- Teacher 1 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-40 h-40 md:w-48 md:h-48 mb-6 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/t1.svg" class="w-full h-full object-cover transition duration-500 transform group-hover:scale-105" alt="Dr. Anisha">
+                        </div>
+                        <h4 class="font-serif text-lg text-white group-hover:text-star-gold transition">Dr. Anisha</h4>
+                        <p class="font-sans text-xs tracking-widest text-gray-400 mt-2 uppercase">Teacher-In-Charge</p>
+                    </div>
+                    <!-- Teacher 2 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-40 h-40 md:w-48 md:h-48 mb-6 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/t2.svg" class="w-full h-full object-cover transition duration-500 transform group-hover:scale-105" alt="Dr. Palak Kanojia">
+                        </div>
+                        <h4 class="font-serif text-lg text-white group-hover:text-star-gold transition">Dr. Palak Kanojia</h4>
+                        <p class="font-sans text-xs tracking-widest text-gray-400 mt-2 uppercase">Teacher-In-Charge</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+        <section id="team" class="py-32 bg-gradient-to-b from-transparent to-black/30 fade-in-section">
+            <div class="container mx-auto px-4 md:px-8"> <!-- Increased width for 5 columns -->
+                <div class="text-center mb-16">
+                    <h2 class="font-serif text-3xl md:text-5xl mb-4">Cabinet 2025-26</h2>
+                    <p class="text-xs tracking-widest text-gray-500 uppercase">The Minds Behind The Canvas</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-y-12 gap-x-6 max-w-7xl mx-auto">
+                    
+                    <!-- Row 1 -->
+                    <!-- Member 1 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m1.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Keshav Singal">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Keshav Singal</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">President</p>
+                        <a href="https://www.linkedin.com/in/keshavsingal" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 2 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m2.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Kamakshi Koul">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Kamakshi Koul</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">General Secretary</p>
+                        <a href="https://www.linkedin.com/in/kamakshi-koul-923014324
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 3 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m3.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Vaishnavi M.">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Vaishnavi M.</Kbd></h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Vice-President</p>
+                        <a href="linkedin.com/in/vaishnavi-m-4620b7315
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 4 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m4.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Tanisha Yadav">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Tanisha Yadav</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Chief Coordinator</p>
+                        <a href="http://linkedin.com/in/tanisha-yadav-309149325" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 5 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m5.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Siya Kayal">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Siya Kayal</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Chief Coordinator</p>
+                        <a href="https://www.linkedin.com/in/siyakayal" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <!-- Member 6 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m6.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Anushka Jain">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Anushka Jain</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Creative & Organising Head</p>
+                        <a href="https://www.linkedin.com/in/anushka-jain-466509333?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 7 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m7.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Luv Chourasiya">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Luv Chourasiya</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Creative & Organising Head</p>
+                        <a href="https://www.linkedin.com/in/luvchaurasiya?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 8 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m8.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Pragya Singh">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Pragya Singh</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Make-a-Difference Head</p>
+                        <a href="https://www.linkedin.com/in/pragya-singh-97982b33a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 9 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m9.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Shourya Balotia">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Shourya Balotia</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Make-a-Difference Head</p>
+                        <a href="https://www.linkedin.com/in/shourya-balotia-441ab22a6?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <!-- Member 10 -->  
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/m10.svg" 
+                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Anjali Rautela">
+                        </div>
+                        <h4 class="font-serif text-sm md:text-base text-white group-hover:text-star-gold transition uppercase tracking-wide">Anjali Rautela</h4>
+                        <p class="font-sans text-[10px] md:text-xs text-gray-400 mt-1 mb-2">Corporate Comms Director</p>
+                        <a href="https://www.linkedin.com/in/anjali-rautela-751811338?trk=contact-info" class="text-gray-500 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-16">
+                    <a href="team.html" class="inline-block border border-white/20 px-8 py-3 text-xs tracking-widest uppercase hover:bg-white hover:text-night-sky transition duration-300 rounded-sm">View More</a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TEAM 2024-25 ================= -->
+        <section class="container mx-auto px-6 mb-24 fade-in-section">
+            <div class="text-center mb-16">
+                <p class="font-sans text-star-gold text-xs tracking-[0.4em] uppercase mb-4">Legacy</p>
+                <h1 class="font-serif text-4xl md:text-6xl text-white mb-8">Team 2024-25</h1>
+                <div class="w-24 h-px bg-white/20 mx-auto"></div>
+            </div>
+
+            <!-- Teacher in Charge (2024-25) -->
+            <div class="mb-24 flex justify-center">
+                 <div class="group text-center flex flex-col items-center">
+                    <div class="relative w-40 h-40 md:w-48 md:h-48 mb-6 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-star-gold transition duration-500">
+                        <img src="images/team/t3.svg" class="w-full h-full object-cover transition duration-500 transform group-hover:scale-105" alt="Teacher 3">
+                    </div>
+                    <h4 class="font-serif text-lg text-white group-hover:text-star-gold transition">Faculty Name</h4>
+                    <p class="font-sans text-xs tracking-widest text-gray-400 mt-2 uppercase">Teacher-In-Charge</p>
+                </div>
+            </div>
+
+            <!-- Cabinet 2024-25 (16 Members) -->
+            <div>
+                <h3 class="font-serif text-2xl text-center text-star-gold mb-12">The Team</h3>
+                <!-- Using a 4-column grid for 16 members -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-6 max-w-7xl mx-auto">
+                    
+                    <!-- Loop T1 to T16 -->
+                    <!-- T1 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT1.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Ankit Kumar">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Ankit Kumar</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">President</p>
+                    </div>
+
+                    <!-- T2 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT2.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Areeb Saifi">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Areeb Saifi</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">General Secretary</p>
+                    </div>
+
+                    <!-- T3 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT3.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Devansh Shukla">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Devansh Shukla</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Vice President</p>
+                    </div>
+
+                    <!-- T4 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT4.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Nayonika Gupta">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Nayonika Gupta</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Chief Coordinator</p>
+                    </div>
+
+                    <!-- T5 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT5.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T5">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T6 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT6.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T6">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T7 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT7.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T7">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T8 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT8.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T8">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T9 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT9.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T9">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T10 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT10.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T10">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T11 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT11.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T11">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T12 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT12.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T12">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T13 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT13.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T13">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T14 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT14.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T14">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T15 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT15.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T15">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                    <!-- T16 -->
+                    <div class="group text-center flex flex-col items-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 mb-4 rounded-full overflow-hidden border border-white/10 group-hover:border-star-gold transition duration-500">
+                            <img src="images/team/TT16.svg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 transform group-hover:scale-110" alt="Member T16">
+                        </div>
+                        <h4 class="font-serif text-sm text-white group-hover:text-star-gold transition uppercase tracking-wide">Name Here</h4>
+                        <p class="font-sans text-[10px] text-gray-400 mt-1">Role</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 bg-black/40">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] text-gray-600 font-sans tracking-[0.2em] uppercase">
+                &copy; 2025-26 Fine Arts Society SRCC. Designed with Starlight.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Star Script
+        const starContainer = document.getElementById('star-container');
+        const createStars = () => {
+            const count = 100; 
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 3 + 2; 
+                const delay = Math.random() * 5;
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+                starContainer.appendChild(star);
+            }
+        };
+        createStars();
+
+        // Mobile Menu
+        const openBtn = document.getElementById('open-menu');
+        const closeBtn = document.getElementById('close-menu');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        openBtn.addEventListener('click', () => {
+            menu.classList.remove('hidden');
+            setTimeout(() => menu.classList.remove('translate-x-full'), 10);
+        });
+
+        const closeMenu = () => {
+            menu.classList.add('translate-x-full');
+            setTimeout(() => menu.classList.add('hidden'), 300);
+        };
+
+        closeBtn.addEventListener('click', closeMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+        // Fade-ins
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Navbar Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-night-sky/95');
+            } else {
+                nav.classList.remove('bg-night-sky/95');
+                nav.classList.add('bg-night-sky/80');
+            }
+        });
+    </script>
+</body>
+</html>

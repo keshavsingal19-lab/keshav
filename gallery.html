@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gallery | FAS SRCC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        'night-sky': '#0B1026',
+                        'star-gold': '#FFD700',
+                        'moon-white': '#F4F6F0',
+                        'glass': 'rgba(255, 255, 255, 0.03)',
+                        'glass-hover': 'rgba(255, 255, 255, 0.08)',
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                    },
+                    animation: {
+                        'twinkle': 'twinkle 4s infinite ease-in-out',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Background & Star Logic */
+        body {
+    /* 1. Put your image URL inside the quotes '' below */
+    /* 2. The rgba(...) part creates a dark tint so text is readable */
+    background-image: 
+        linear-gradient(rgba(9, 9, 16, 0.75), rgba(26, 31, 60, 0.8)),
+        url('images/gallerybg.svg');
+
+    /* This ensures the image covers the whole screen */
+    background-size: cover;
+    background-position: center;
+    
+    /* This keeps the image still while you scroll */
+    background-attachment: fixed;
+    
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out; opacity: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1026; }
+        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
+        
+        /* Animation Classes */
+        .fade-in-section {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible { opacity: 1; transform: none; }
+
+        /* Gallery Specific Styles */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 768px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+
+        /* Prevent breaks inside gallery items */
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* Lightbox Overlay */
+        #lightbox {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-moon-white antialiased">
+
+    <!-- Starfield -->
+    <div class="stars" id="star-container"></div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-night-sky/95 backdrop-blur-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-center items-center space-y-8 text-2xl font-serif hidden">
+        <button id="close-menu" class="absolute top-6 right-6 p-2 text-white hover:text-star-gold transition">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <a href="index.html#home" class="mobile-link hover:text-star-gold transition">Home</a>
+        <a href="about.html" class="mobile-link hover:text-star-gold transition">About</a>
+        <a href="gallery.html" class="mobile-link text-star-gold transition">Gallery</a>
+        <a href="team.html" class="mobile-link hover:text-star-gold transition">Team</a>
+        <a href="contact.html" class="mobile-link hover:text-star-gold transition">Contact</a>
+    </div>
+
+    <!-- Navbar -->
+    <header class="fixed w-full top-0 z-40 transition-all duration-300 border-b border-white/5 bg-night-sky/80 backdrop-blur-md" id="navbar">
+        <div class="relative container mx-auto px-6 h-24 flex justify-center items-center">
+            
+            <a href="index.html" class="absolute left-6 top-1/2 -translate-y-1/2 hidden md:block h-[128px] w-[128px] transition hover:scale-105 z-50">
+                <img src="images/FASlogo.svg" alt="FAS" class="h-full w-full object-contain drop-shadow-md" width="200px">
+            </a>
+
+            <nav class="hidden md:flex space-x-12 text-xs font-sans tracking-[0.2em] uppercase text-gray-300">
+                <a href="index.html#home" class="hover:text-star-gold transition duration-300 relative group">
+                    Home
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="about.html" class="hover:text-star-gold transition duration-300 relative group">
+                    About
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="gallery.html" class="text-star-gold relative group">
+                    Gallery
+                    <span class="absolute -bottom-2 left-0 w-full h-px bg-star-gold"></span>
+                </a>
+                <a href="team.html" class="hover:text-star-gold transition duration-300 relative group">
+                    Team
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+                <a href="contact.html" class="hover:text-star-gold transition duration-300 relative group">
+                    Contact
+                    <span class="absolute -bottom-2 left-1/2 w-0 h-px bg-star-gold transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+                </a>
+            </nav>
+
+            <a href="index.html" class="absolute top-2 right-6 hidden md:block w-[128px] h-[80px] hover:scale-105 transition duration-300 cursor-pointer z-50">
+    <img src="images/srcclogo.svg" alt="SRCC" class="w-full h-full object-contain drop-shadow-lg">
+</a>
+
+            <button id="open-menu" class="md:hidden absolute right-6 p-2 text-white hover:bg-white/10 rounded-full transition">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+             <!-- Mobile Logo Placeholder (Absolute Left for mobile) -->
+             <a href="index.html" class="md:hidden absolute left-6 border/20 w-20 h-20 rounded-full flex items-center justify-center">
+                 <img src="images/FASlogo.svg" alt="FAS" class="w-full h-full object-contain drop-shadow-lg">
+             </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20">
+
+        <!-- Header -->
+        <section class="container mx-auto px-6 mb-12 text-center fade-in-section">
+            <p class="font-sans text-star-gold text-xs tracking-[0.4em] uppercase mb-4">The Archive</p>
+            <h1 class="font-serif text-4xl md:text-6xl text-white mb-8">Curated Expressions</h1>
+            <p class="font-sans font-light text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                A collection of student works spanning mediums, emotions, and years.
+            </p>
+        </section>
+
+        <!-- Gallery Grid (Masonry) -->
+        <section class="container mx-auto px-6 mb-24 min-h-screen">
+            <div class="masonry-grid" id="gallery-container">
+                
+                <!-- 1. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/1.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 1">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 1</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 2. Landscape (16:9) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/2.svg" class="w-full aspect-video object-cover transition duration-700 group-hover:scale-110" alt="Artwork 2">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 2</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 3. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/3.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 3">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 3</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 4. Tall (9:16) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/4.svg" class="w-full aspect-[9/16] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 4">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 4</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 5. Landscape (4:3) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/5.svg" class="w-full aspect-[4/3] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 5">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 5</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 6. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/6.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 6">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 6</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 7. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/7.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 7">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 7</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 8. Tall (9:16) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/8.svg" class="w-full aspect-[9/16] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 8">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 8</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 9. Landscape (16:9) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/9.svg" class="w-full aspect-video object-cover transition duration-700 group-hover:scale-110" alt="Artwork 9">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 9</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 10. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/10.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 10">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 10</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 11. Landscape (4:3) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/11.svg" class="w-full aspect-[4/3] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 11">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 11</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 12. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/12.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 12">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 12</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 13. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/13.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 13">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 13</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 14. Landscape (16:9) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/14.svg" class="w-full aspect-video object-cover transition duration-700 group-hover:scale-110" alt="Artwork 14">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 14</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 15. Tall (9:16) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/15.svg" class="w-full aspect-[9/16] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 15">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 15</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 16. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/16.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 16">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 16</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 17. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/17.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 17">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 17</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 18. Landscape (4:3) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/18.svg" class="w-full aspect-[4/3] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 18">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 18</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 19. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/19.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 19">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 19</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 20. Landscape (16:9) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/20.svg" class="w-full aspect-video object-cover transition duration-700 group-hover:scale-110" alt="Artwork 20">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 20</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 21. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/21.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 21">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 21</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 22. Tall (9:16) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/22.svg" class="w-full aspect-[9/16] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 22">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 22</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 23. Landscape (4:3) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/23.svg" class="w-full aspect-[4/3] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 23">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 23</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 24. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/24.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 24">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 24</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 25. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/25.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 25">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 25</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+                
+                <!-- 26. Tall (9:16) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/26.svg" class="w-full aspect-[9/16] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 26">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 26</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 27. Landscape (16:9) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/27.svg" class="w-full aspect-video object-cover transition duration-700 group-hover:scale-110" alt="Artwork 27">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 27</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 28. Portrait (3:4) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/28.svg" class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 28">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 28</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 29. Square (1:1) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/29.svg" class="w-full aspect-square object-cover transition duration-700 group-hover:scale-110" alt="Artwork 29">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 29</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+                <!-- 30. Landscape (4:3) -->
+                <div class="gallery-item fade-in-section group rounded-sm overflow-hidden cursor-zoom-in" onclick="openLightbox(this)">
+                    <img src="images/gallery/30.svg" class="w-full aspect-[4/3] object-cover transition duration-700 group-hover:scale-110" alt="Artwork 30">
+                    <div class="absolute inset-0 bg-night-sky/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="font-serif text-lg italic text-star-gold">Artwork 30</h4>
+                        <p class="text-[10px] uppercase tracking-widest mt-2 text-gray-300">Artist Name</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 bg-black/40">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] text-gray-600 font-sans tracking-[0.2em] uppercase">
+                &copy; 2025-26 Fine Arts Society SRCC. Designed with Starlight.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[60] bg-black/95 hidden flex justify-center items-center p-4 opacity-0 pointer-events-none">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white hover:text-star-gold transition">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+        <div class="max-w-5xl max-h-[90vh] flex flex-col md:flex-row bg-night-sky/50 rounded-sm overflow-hidden border border-white/10">
+            <div class="w-full md:w-2/3 bg-black flex justify-center items-center">
+                <!-- Lightbox Image Source -->
+                <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] object-contain" alt="Artwork">
+            </div>
+            <div class="w-full md:w-1/3 p-8 flex flex-col justify-center text-left border-l border-white/10">
+                <p class="text-xs tracking-widest text-gray-500 uppercase mb-2">Selected Work</p>
+                <h3 id="lightbox-title" class="font-serif text-3xl text-star-gold mb-2">Title</h3>
+                <p id="lightbox-artist" class="text-sm font-sans text-white mb-6">Artist Name</p>
+                <p class="text-gray-400 font-light text-sm leading-relaxed">
+                    A featured piece from the SRCC collection.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // 1. STAR GENERATION
+        const starContainer = document.getElementById('star-container');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.width = `${Math.random() * 2 + 1}px`;
+            star.style.height = star.style.width;
+            star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            starContainer.appendChild(star);
+        }
+
+        // 2. LIGHTBOX LOGIC
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightbox-img');
+        const lbTitle = document.getElementById('lightbox-title');
+        const lbArtist = document.getElementById('lightbox-artist');
+        const closeLb = document.getElementById('close-lightbox');
+
+        function openLightbox(element) {
+            // Logic to grab image source from the clicked element
+            // If you use <img> inside, we grab that. If you use background div, we might need a data attribute.
+            // For now, let's assume user puts an <img> tag inside the placeholder div.
+            
+            const img = element.querySelector('img');
+            const title = element.querySelector('h4').innerText;
+            const artist = element.querySelector('p').innerText;
+
+            if (img) {
+                lbImg.src = img.src;
+                lbTitle.innerText = title;
+                lbArtist.innerText = artist;
+
+                lightbox.classList.remove('hidden');
+                lightbox.classList.remove('pointer-events-none');
+                setTimeout(() => {
+                    lightbox.classList.remove('opacity-0');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                console.log("No image found in this slot yet.");
+            }
+        }
+
+        function closeLightboxFunc() {
+            lightbox.classList.add('opacity-0');
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                lightbox.classList.add('pointer-events-none');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+
+        closeLb.addEventListener('click', closeLightboxFunc);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightboxFunc();
+        });
+
+        // 3. FADE IN OBSERVER
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Mobile Menu
+        const openBtn = document.getElementById('open-menu');
+        const closeBtn = document.getElementById('close-menu');
+        const menu = document.getElementById('mobile-menu');
+
+        openBtn.addEventListener('click', () => {
+            menu.classList.remove('hidden');
+            setTimeout(() => menu.classList.remove('translate-x-full'), 10);
+        });
+        closeBtn.addEventListener('click', () => {
+            menu.classList.add('translate-x-full');
+            setTimeout(() => menu.classList.add('hidden'), 300);
+        });
+
+        // Navbar Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-night-sky/95');
+            } else {
+                nav.classList.remove('bg-night-sky/95');
+                nav.classList.add('bg-night-sky/80');
+            }
+        });
+    </script>
+</body>
+</html>
