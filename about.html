@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | FAS SRCC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        'night-sky': '#0B1026',
+                        'star-gold': '#FFD700',
+                        'moon-white': '#F4F6F0',
+                        'glass': 'rgba(255, 255, 255, 0.03)',
+                        'glass-hover': 'rgba(255, 255, 255, 0.08)',
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                    },
+                    animation: {
+                        'twinkle': 'twinkle 4s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Background & Star Logic */
+        body {
+            background-image: 
+                linear-gradient(rgba(9, 9, 16, 0.7), rgba(11, 16, 38, 0.7)),
+                url('images/aboutbg.svg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out; opacity: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0B1026; }
+        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
+        
+        /* Animations */
+        .fade-in-up {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.is-visible { opacity: 1; transform: none; }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Outline Text for numbers */
+        .outline-text {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="text-moon-white antialiased selection:bg-star-gold selection:text-night-sky">
+
+    <!-- Starfield -->
+    <div class="stars" id="star-container"></div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-night-sky/95 backdrop-blur-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-center items-center space-y-8 text-2xl font-serif hidden">
+        <button id="close-menu" class="absolute top-6 right-6 p-2 text-white hover:text-star-gold transition">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <a href="index.html#home" class="mobile-link hover:text-star-gold transition">Home</a>
+        <a href="about.html" class="mobile-link text-star-gold">About</a>
+        <a href="gallery.html" class="mobile-link hover:text-star-gold transition">Gallery</a>
+        <a href="team.html" class="mobile-link hover:text-star-gold transition">Team</a>
+        <a href="contact.html" class="mobile-link hover:text-star-gold transition">Contact</a>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="fixed w-full top-0 z-40 transition-all duration-300 border-b border-white/5 bg-night-sky/80 backdrop-blur-md" id="navbar">
+        <div class="relative container mx-auto px-6 h-20 md:h-24 flex justify-between md:justify-center items-center">
+            
+            <!-- Mobile Logo (Left) -->
+            <a href="index.html" class="md:hidden block w-20 h-20">
+                <img src="images/FASlogo.svg" alt="FAS" class="w-full h-full object-contain">
+            </a>
+
+            <!-- Desktop Logo (Left Absolute) -->
+            <a href="index.html" class="absolute left-6 top-1/2 -translate-y-1/2 hidden md:block h-[128px] w-[128px] transition hover:scale-105 z-50">
+                <img src="images/FASlogo.svg" alt="FAS" class="h-full w-full object-contain drop-shadow-md">
+            </a>
+
+            <!-- Central Navbar -->
+            <nav class="hidden md:flex space-x-12 text-xs font-sans tracking-[0.2em] uppercase text-gray-300">
+                <a href="index.html#home" class="hover:text-star-gold transition duration-300">Home</a>
+                <a href="about.html" class="text-star-gold relative group">
+                    About
+                    <span class="absolute -bottom-2 left-0 w-full h-px bg-star-gold"></span>
+                </a>
+                <a href="gallery.html" class="hover:text-star-gold transition duration-300">Gallery</a>
+                <a href="team.html" class="hover:text-star-gold transition duration-300">Team</a>
+                <a href="contact.html" class="hover:text-star-gold transition duration-300">Contact</a>
+            </nav>
+
+            <!-- Desktop Logo (Right Absolute) -->
+            <a href="index.html" class="absolute top-1/2 -translate-y-1/2 right-6 hidden md:block w-[128px] h-[80px] hover:scale-105 transition duration-300 z-50">
+                <img src="images/srcclogo.svg" alt="SRCC" class="w-full h-full object-contain">
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button id="open-menu" class="md:hidden p-2 text-white hover:bg-white/10 rounded-full transition">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-28 pb-16">
+
+        <!-- Page Header -->
+        <section class="container mx-auto px-6 mb-16 text-center fade-in-up">
+            <span class="text-star-gold text-[10px] md:text-xs tracking-[0.3em] uppercase block mb-3">Est. SRCC</span>
+            <h1 class="font-serif text-4xl md:text-6xl text-white mb-6">About FAS</h1>
+            <p class="font-sans text-gray-400 font-light max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+                Fostering creativity, culture, and community within the heart of SRCC. We are the brushstrokes on the canvas of college life.
+            </p>
+        </section>
+
+        <!-- 1. KEY PILLARS -->
+        <section class="container mx-auto px-6 mb-20 fade-in-up">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-2xl md:text-3xl mb-2">Our Pillars</h2>
+                <div class="w-12 h-px bg-star-gold mx-auto opacity-50"></div>
+            </div>
+
+            <!-- Mobile: 2x2 Grid | Desktop: 4 Columns -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="glass-card p-5 md:p-6 rounded text-center">
+                    <i data-lucide="activity" class="w-6 h-6 text-star-gold mx-auto mb-3"></i>
+                    <h4 class="font-serif text-base text-white mb-1">Engagement</h4>
+                    <p class="text-[10px] md:text-xs text-gray-400 leading-tight">Workshops & Competitions</p>
+                </div>
+                <div class="glass-card p-5 md:p-6 rounded text-center">
+                    <i data-lucide="fingerprint" class="w-6 h-6 text-star-gold mx-auto mb-3"></i>
+                    <h4 class="font-serif text-base text-white mb-1">Identity</h4>
+                    <p class="text-[10px] md:text-xs text-gray-400 leading-tight">Strong Visual Branding</p>
+                </div>
+                <div class="glass-card p-5 md:p-6 rounded text-center">
+                    <i data-lucide="share-2" class="w-6 h-6 text-star-gold mx-auto mb-3"></i>
+                    <h4 class="font-serif text-base text-white mb-1">Outreach</h4>
+                    <p class="text-[10px] md:text-xs text-gray-400 leading-tight">Alumni & Partners</p>
+                </div>
+                <div class="glass-card p-5 md:p-6 rounded text-center">
+                    <i data-lucide="palette" class="w-6 h-6 text-star-gold mx-auto mb-3"></i>
+                    <h4 class="font-serif text-base text-white mb-1">Culture</h4>
+                    <p class="text-[10px] md:text-xs text-gray-400 leading-tight">Tradition & Trends</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. CORE VALUES (Centered) -->
+        <section class="container mx-auto px-6 mb-24 fade-in-up">
+            <div class="text-center mb-12">
+                <h2 class="font-serif text-3xl md:text-4xl mb-3">Core Values</h2>
+                <p class="text-xs text-gray-500 mb-4 uppercase tracking-widest">The principles that guide our art</p>
+                <div class="w-16 h-px bg-star-gold mx-auto"></div>
+            </div>
+
+            <!-- Mobile: 2 col grid (compact) | Desktop: 3 col grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <!-- Card 1 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="lightbulb" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Innovation</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Encouraging original thought and artistic exploration.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="award" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Excellence</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Striving for high standards in every brushstroke.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="heart" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Inclusivity</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Welcoming all voices and diverse traditions.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="users" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Community</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Building meaningful connections among artists.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="globe" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Preservation</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Honoring traditions while embracing the new.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="glass-card p-4 md:p-8 rounded hover:bg-white/5 transition group text-center md:text-left">
+                    <i data-lucide="mic-2" class="w-6 h-6 text-star-gold mb-3 mx-auto md:mx-0 group-hover:scale-110 transition"></i>
+                    <h3 class="font-serif text-lg md:text-xl mb-2">Impact</h3>
+                    <p class="text-[10px] md:text-sm text-gray-400 leading-relaxed">Art as a language for social awareness.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. DEPARTMENT STRUCTURE (Waterfall Creative Layout) -->
+        <section class="container mx-auto px-6 mb-24 fade-in-up">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl md:text-5xl mb-4">The Wings</h2>
+                <div class="w-24 h-px bg-white/20 mx-auto"></div>
+                <p class="text-xs text-gray-500 mt-4 tracking-widest uppercase">Department Structure</p>
+            </div>
+
+            <!-- Staggered Waterfall Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                
+                <!-- Wing 1 -->
+                <div class="glass-card p-6 rounded relative overflow-hidden group hover:border-star-gold/30 transition-colors duration-500 h-full flex flex-col justify-between">
+                    <div class="absolute -right-4 -top-6 text-[120px] font-serif font-bold outline-text opacity-20 select-none pointer-events-none group-hover:opacity-40 transition duration-500">01</div>
+                    <div class="relative z-10">
+                        <div class="w-10 h-10 rounded-full border border-star-gold/30 flex items-center justify-center mb-6 text-star-gold">
+                            <i data-lucide="pen-tool" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-white mb-3">Creative & Organizing</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            The core engine. We conceptualize workshops, manage in-house events, and turn abstract ideas into tangible reality.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Wing 2 (Staggered Down) -->
+                <div class="glass-card p-6 rounded relative overflow-hidden group hover:border-star-gold/30 transition-colors duration-500 h-full flex flex-col justify-between md:mt-12">
+                    <div class="absolute -right-4 -top-6 text-[120px] font-serif font-bold outline-text opacity-20 select-none pointer-events-none group-hover:opacity-40 transition duration-500">02</div>
+                    <div class="relative z-10">
+                        <div class="w-10 h-10 rounded-full border border-star-gold/30 flex items-center justify-center mb-6 text-star-gold">
+                            <i data-lucide="monitor" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-white mb-3">Technical & Editorial</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            The digital face. From graphic design to content curation, we ensure FAS looks as good as it feels.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Wing 3 -->
+                <div class="glass-card p-6 rounded relative overflow-hidden group hover:border-star-gold/30 transition-colors duration-500 h-full flex flex-col justify-between">
+                    <div class="absolute -right-4 -top-6 text-[120px] font-serif font-bold outline-text opacity-20 select-none pointer-events-none group-hover:opacity-40 transition duration-500">03</div>
+                    <div class="relative z-10">
+                        <div class="w-10 h-10 rounded-full border border-star-gold/30 flex items-center justify-center mb-6 text-star-gold">
+                            <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-white mb-3">MAD Wing</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            "Make a Difference". We take art beyond the canvas to collaborate with NGOs and drive social impact.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Wing 4 (Staggered Down) -->
+                <div class="glass-card p-6 rounded relative overflow-hidden group hover:border-star-gold/30 transition-colors duration-500 h-full flex flex-col justify-between md:mt-12">
+                    <div class="absolute -right-4 -top-6 text-[120px] font-serif font-bold outline-text opacity-20 select-none pointer-events-none group-hover:opacity-40 transition duration-500">04</div>
+                    <div class="relative z-10">
+                        <div class="w-10 h-10 rounded-full border border-star-gold/30 flex items-center justify-center mb-6 text-star-gold">
+                            <i data-lucide="briefcase" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-white mb-3">Corporate Comm.</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            The bridge. We build partnerships, manage sponsorships, and foster alumni relations.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. EVENTS (Centered) -->
+        <section class="container mx-auto px-6 mb-16 fade-in-up">
+            <div class="text-center mb-12">
+                <h2 class="font-serif text-3xl md:text-4xl mb-3">Flagship Events</h2>
+                <div class="w-16 h-px bg-star-gold mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Artisia -->
+                <div class="glass-card rounded overflow-hidden group">
+                    <div class="h-48 md:h-64 overflow-hidden relative">
+                        <img src="images/gallery/artisia.svg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Artisia">
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition"></div>
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <span class="text-star-gold text-[10px] tracking-widest uppercase font-bold">Main Event</span>
+                        <h3 class="font-serif text-2xl text-white mt-2 mb-3">Artisia</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            A vibrant platform for students to showcase talent. It fosters healthy competition and celebrates diverse artistic expressions.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Halloween -->
+                <div class="glass-card rounded overflow-hidden group">
+                    <div class="h-48 md:h-64 overflow-hidden relative">
+                        <img src="images/gallery/halloween.svg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Halloween">
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition"></div>
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <span class="text-star-gold text-[10px] tracking-widest uppercase font-bold">Mid-Year Celebration</span>
+                        <h3 class="font-serif text-2xl text-white mt-2 mb-3">Halloween</h3>
+                        <p class="text-sm text-gray-400 font-light leading-relaxed">
+                            Themed artistic activities, costume contests, and interactive sessions creating a lively atmosphere on campus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Back Action -->
+        <div class="text-center fade-in-up pb-10">
+            <a href="index.html" class="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-gray-400 hover:text-star-gold transition duration-300">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Return Home
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-6 bg-black/60 backdrop-blur-md">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] text-gray-500 font-sans tracking-[0.2em] uppercase">
+                &copy; 2025-26 Fine Arts Society SRCC.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Star Script (Optimized)
+        const starContainer = document.getElementById('star-container');
+        const createStars = () => {
+            const count = window.innerWidth < 768 ? 40 : 80; // Fewer stars on mobile
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 3 + 2; 
+                const delay = Math.random() * 5;
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+                starContainer.appendChild(star);
+            }
+        };
+        createStars();
+
+        // Mobile Menu
+        const openBtn = document.getElementById('open-menu');
+        const closeBtn = document.getElementById('close-menu');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        openBtn.addEventListener('click', () => {
+            menu.classList.remove('hidden');
+            setTimeout(() => menu.classList.remove('translate-x-full'), 10);
+        });
+
+        const closeMenu = () => {
+            menu.classList.add('translate-x-full');
+            setTimeout(() => menu.classList.add('hidden'), 300);
+        };
+
+        closeBtn.addEventListener('click', closeMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+        // Animation Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-up').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Navbar Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-night-sky/95', 'shadow-lg');
+                nav.classList.remove('bg-night-sky/80');
+            } else {
+                nav.classList.remove('bg-night-sky/95', 'shadow-lg');
+                nav.classList.add('bg-night-sky/80');
+            }
+        });
+    </script>
+</body>
+</html>
